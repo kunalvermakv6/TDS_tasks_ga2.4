@@ -2,13 +2,15 @@ name: Daily Repository Update
 
 on:
   schedule:
-    # Runs once daily at 05:30 UTC (specific time, no wildcards)
     - cron: "30 5 * * *"
-  workflow_dispatch:  # Allows manual trigger for testing
+  workflow_dispatch:
 
 jobs:
   daily-commit:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # ← THIS IS REQUIRED
 
     steps:
       - name: Checkout repository
@@ -19,10 +21,9 @@ jobs:
           git config user.name "DevSync Bot"
           git config user.email "23f2001870@ds.study.iitm.ac.in"
 
-      # Required: step name must include your email
       - name: Daily update by 23f2001870@ds.study.iitm.ac.in
         run: |
           echo "Last update: $(date -u)" >> daily-log.txt
           git add daily-log.txt
-          git commit -m "chore: automated daily update $(date -u)" || echo "No changes to commit"
+          git commit -m "chore: automated daily update $(date -u)" || echo "No changes"
           git push
